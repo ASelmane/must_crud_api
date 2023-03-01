@@ -12,6 +12,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        // creation de données de test pour la table Brand
         $brands = ["Apple", "Samsung", "Ice Tea", "Coca Cola", "Granola", "Oreo"];
         foreach ($brands as $brd) {
             $brand = new Brand();
@@ -19,6 +20,7 @@ class AppFixtures extends Fixture
             $manager->persist($brand);
         }
 
+        // creation de données de test pour la table Category
         $categories = ["Electronique","Smartphone", "Tablette","Alimentaire","Boisson", "Biscuit"];
         foreach ($categories as $cat) {
             $category = new Category();
@@ -28,6 +30,7 @@ class AppFixtures extends Fixture
 
         $manager->flush();
 
+        // creation de données de test pour la table Product
         $product = new Product();
         $product->setName("iPhone 14");
         $product->setBrand($manager->getRepository(Brand::class)->findByName("Apple")[0]);

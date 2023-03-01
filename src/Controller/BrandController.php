@@ -22,6 +22,7 @@ class BrandController extends AbstractController
      */
     public function list(BrandRepository $brandRepository): Response
     {
+        //renvoie un tableau d'objets Brand
         return $this->json($brandRepository->findAll(), 200, [], ['groups' => 'brand:list']);
     }
 
@@ -32,6 +33,7 @@ class BrandController extends AbstractController
     public function new(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         try {
+            //place le contenu de la requete dans un objet Brand
             $brand = $serializer->deserialize($request->getContent(), Brand::class, 'json');
             $errors = $validator->validate($brand);
             if (count($errors) > 0) {
@@ -51,6 +53,7 @@ class BrandController extends AbstractController
      */
     public function show(Brand $brand): Response
     {
+        //renvoie un objet Brand
         return $this->json($brand, 200, [], ['groups' => ['brand:list', 'brand:read','category:list']]);
     }
 
@@ -80,6 +83,7 @@ class BrandController extends AbstractController
      */
     public function delete(Brand $brand, BrandRepository $brandRepository): Response
     {
+        //supprime un objet Brand
         $brandRepository->remove($brand);
         return $this->json(['message' => 'Marque supprimée'], 200);
     }

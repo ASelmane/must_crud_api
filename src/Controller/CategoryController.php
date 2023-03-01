@@ -23,6 +23,7 @@ class CategoryController extends AbstractController
      */
     public function list(CategoryRepository $categoryRepository): Response
     {
+        //renvoie un tableau d'objets Category
         return $this->json($categoryRepository->findAll(), 200, [], ['groups' => 'category:list']);
     }
 
@@ -32,6 +33,7 @@ class CategoryController extends AbstractController
     public function new(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         try {
+            //place le contenu de la requete dans un objet Category
             $category = $serializer->deserialize($request->getContent(), Category::class, 'json');
             $errors = $validator->validate($category);
             if (count($errors) > 0) {
@@ -50,6 +52,7 @@ class CategoryController extends AbstractController
      */
     public function show(Category $category): Response
     {
+        //renvoie un objet Category
         return $this->json($category, 200, [], ['groups' => ['category:list', 'category:read']]);
     }
 
@@ -77,6 +80,7 @@ class CategoryController extends AbstractController
      */
     public function delete(Category $category, CategoryRepository $categoryRepository): Response
     {
+        //supprime un objet Category
         $categoryRepository->remove($category);
         return $this->json(['message' => 'Categorie supprimée'], 200);
     }

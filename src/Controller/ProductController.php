@@ -25,6 +25,7 @@ class ProductController extends AbstractController
      */
     public function list(ProductRepository $productRepository): Response
     {
+        //renvoie un tableau d'objets Product
         return $this->json($productRepository->findAll(), 200, [], ['groups' => ['product:read', 'brand:list', 'category:list']]);
     }
 
@@ -34,9 +35,10 @@ class ProductController extends AbstractController
     public function new(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         try {
-            // get brand value from request
             $content = json_decode($request->getContent(), true);
             $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
+
+            //verifier si Request contient brand et category et les ajouter
             if (isset($content['brand'])) {
                 $brand = $em->getRepository(Brand::class)->find($content['brand']);
                 $product->setBrand($brand);
@@ -47,6 +49,7 @@ class ProductController extends AbstractController
                     $product->addCategory($category);
                 }
             }
+            //verifier si le produit est valide
             $errors = $validator->validate($product);
             if (count($errors) > 0) {
                 return $this->json($errors, 400);
@@ -64,6 +67,7 @@ class ProductController extends AbstractController
      */
     public function show(Product $product): Response
     {
+        //renvoie un objet Product
         return $this->json($product, 200, [], ['groups' => ['product:read', 'brand:list', 'category:list']]);
     }
 
@@ -75,11 +79,12 @@ class ProductController extends AbstractController
         try {
             $content = json_decode($request->getContent(), true);
             $product = $serializer->deserialize($request->getContent(), Product::class, 'json', ['object_to_populate' => $product]);
+            
+            //verofier si Request contient brand et category et les modifier
             if (isset($content['brand'])) {
                 $brand = $em->getRepository(Brand::class)->find($content['brand']);
                 $product->setBrand($brand);
             }
-            //remplacer les categories
             if (isset($content['category'])) {
                 $product->removeAllCategories();
                 foreach ($content['category'] as $cat) {
@@ -87,6 +92,8 @@ class ProductController extends AbstractController
                     $product->addCategory($category);
                 }
             }
+
+            //verifier si le produit est valide
             $errors = $validator->validate($product);
             if (count($errors) > 0) {
                 return $this->json($errors, 400);
@@ -104,6 +111,7 @@ class ProductController extends AbstractController
      */
     public function delete(Request $request, Product $product, ProductRepository $productRepository): Response
     {
+        //supprimer un produit
         $productRepository->remove($product);
         return $this->json(['message' => 'Produit supprimée'], 200);
     }

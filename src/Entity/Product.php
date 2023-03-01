@@ -140,6 +140,7 @@ class Product
         return $this;
     }
 
+    //vide la collection de catégories pour le produit
     public function removeAllCategories(): self
     {
         $this->categories = new ArrayCollection();
@@ -171,6 +172,7 @@ class Product
         return $this;
     }
 
+    //utilise l'id pour générer un md5
     public function getMd5(): ?string
     {
         return md5($this->id);
