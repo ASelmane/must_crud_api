@@ -23,7 +23,7 @@ class CategoryController extends AbstractController
      */
     public function list(CategoryRepository $categoryRepository): Response
     {
-        return $this->json($categoryRepository->findAll(), 200);
+        return $this->json($categoryRepository->findAll(), 200, [], ['groups' => 'category:list']);
     }
 
     /**
@@ -39,7 +39,7 @@ class CategoryController extends AbstractController
             }
             $em->persist($category);
             $em->flush();
-            return $this->json($category, 201);
+            return $this->json($category, 201, [], ['groups' => ['category:list', 'category:read']]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
@@ -50,7 +50,7 @@ class CategoryController extends AbstractController
      */
     public function show(Category $category): Response
     {
-        return $this->json($category, 200);
+        return $this->json($category, 200, [], ['groups' => ['category:list', 'category:read']]);
     }
 
     /**
@@ -66,7 +66,7 @@ class CategoryController extends AbstractController
             }
             $em->persist($category);
             $em->flush();
-            return $this->json($category, 200);
+            return $this->json($category, 200, [], ['groups' => ['category:list', 'category:read']]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
@@ -78,6 +78,6 @@ class CategoryController extends AbstractController
     public function delete(Category $category, CategoryRepository $categoryRepository): Response
     {
         $categoryRepository->remove($category);
-        return $this->json(['message' => 'Marque supprimée'], 200);
+        return $this->json(['message' => 'Categorie supprimée'], 200);
     }
 }

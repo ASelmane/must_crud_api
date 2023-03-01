@@ -5,10 +5,15 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
+ * @UniqueEntity("name", message="Le nom du produit est déjà utilisé")
  */
 class Product
 {
@@ -16,39 +21,54 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"product:read", "brand:read", "category:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom du produit est obligatoire")
+     * @Groups({"product:read", "brand:read", "category:read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="La description du produit est obligatoire")
+     * @Groups({"product:read", "brand:read", "category:read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank(message="La marque du produit est obligatoire")
+     * @Groups({"product:read", "category:read"})
      */
     private $brand;
 
     /**
      * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="products")
+     * @Groups({"product:read", "brand:read"})
      */
     private $categories;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"product:read"})
      */
     private $url;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"product:read"})
      */
-    private $active;
+    private $active = false;
+
+    /**
+     * @Groups({"product:read"})
+     */
+    private $md5;
 
     public function __construct()
     {
@@ -120,6 +140,13 @@ class Product
         return $this;
     }
 
+    public function removeAllCategories(): self
+    {
+        $this->categories = new ArrayCollection();
+
+        return $this;
+    }
+
     public function getUrl(): ?string
     {
         return $this->url;
@@ -142,5 +169,10 @@ class Product
         $this->active = $active;
 
         return $this;
+    }
+
+    public function getMd5(): ?string
+    {
+        return md5($this->id);
     }
 }

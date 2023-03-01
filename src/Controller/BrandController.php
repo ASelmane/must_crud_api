@@ -18,11 +18,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class BrandController extends AbstractController
 {
     /**
-     * @Route("", name="app_brand_index", methods={"GET"})
+     * @Route("", name="app_brand_list", methods={"GET"})
      */
     public function list(BrandRepository $brandRepository): Response
     {
-        return $this->json($brandRepository->findAll(), 200);
+        return $this->json($brandRepository->findAll(), 200, [], ['groups' => 'brand:list']);
     }
 
     /**
@@ -39,7 +39,7 @@ class BrandController extends AbstractController
             }
             $em->persist($brand);
             $em->flush();
-            return $this->json($brand, 201);
+            return $this->json($brand, 201, [], ['groups' => ['brand:list', 'brand:read']]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
@@ -51,7 +51,7 @@ class BrandController extends AbstractController
      */
     public function show(Brand $brand): Response
     {
-        return $this->json($brand, 200);
+        return $this->json($brand, 200, [], ['groups' => ['brand:list', 'brand:read','category:list']]);
     }
 
     /**
@@ -68,7 +68,7 @@ class BrandController extends AbstractController
             }
             $em->persist($brand);
             $em->flush();
-            return $this->json($brand, 200);
+            return $this->json($brand, 200, [], ['groups' => ['brand:list', 'brand:read','category:list']]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
